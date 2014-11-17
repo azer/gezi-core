@@ -1,0 +1,29 @@
+{
+  "name": "gezi-core",
+  "version": "0.0.0",
+  "description": "Core library of the Gezi Web Browser",
+  "main": "index.js",
+  "scripts": {
+    "test": "prova test/* -b"
+  },
+  "keywords": [
+    "gezi",
+    "browser"
+  ],
+  "dependencies": {
+    "less-common-words": "^0.0.0",
+    "parallel-loop": "0.0.3",
+    "parallelly": "0.0.1",
+    "unique-now": "^0.0.1",
+    "uniques": "0.0.1"
+  },
+  "devDependencies": {
+    "prova": "^1.15.0"
+  },
+  "repository": {
+    "url": "git@github.com:gezi\/gezi-core.git",
+    "type": "git"
+  },
+  "author": "azer",
+  "license": "BSD"
+}
