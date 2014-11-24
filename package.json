@@ -21,7 +21,7 @@
     "prova": "^1.15.0"
   },
   "repository": {
-    "url": "git@github.com:gezi\/gezi-core.git",
+    "url": "git@github.com:gezi/gezi-core.git",
     "type": "git"
   },
   "author": "azer",

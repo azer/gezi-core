@@ -25,7 +25,7 @@ test('visiting a site', function (t) {
 });
 
 test('active urls', function (t) {
-  t.plan(3);
+  t.plan(6);
 
   history.get('http://en.wikipedia.org/wiki/foo#', function (error, wiki) {
     // should be in active urls table
@@ -33,6 +33,12 @@ test('active urls', function (t) {
       t.error(error);
       t.equal(result.length, 1);
       t.equal(result[0].url, wiki.id);
+    });
+
+    history.activeVisits(function (error, result) {
+      t.error(error);
+      t.equal(result.length, 1);
+      t.deepEqual(result[0], wiki);
     });
   });
 });
