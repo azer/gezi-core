@@ -1,6 +1,6 @@
 {
   "name": "gezi-core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Core library of the Gezi Web Browser",
   "main": "index.js",
   "scripts": {
