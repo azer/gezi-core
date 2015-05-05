@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "prova": "^1.15.0",
-    "serially": "^1.0.0"
+    "serially": "^1.0.1"
   },
   "repository": {
     "url": "git@github.com:gezi/gezi-core.git",

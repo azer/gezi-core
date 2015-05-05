@@ -106,45 +106,77 @@ test('killing a frame', function (t) {
   });
 });
 
+test('navigating', function (t) {
+  t.plan(8);
+
+  serial()
+    .run(frames.reset)
+    .then('id1', frames.open, ['http://roadbeats.com'])
+    .then('id2', frames.open, ['http://roadbeats.com/hasankeyf'])
+    .done(function (errors, ids) {
+      t.error(errors);
+
+      var id1 = ids.id1[0];
+      var id2 = ids.id2[0];
+
+      frames.navigate(id2, 'http://roadbeats.com/yo', function (error, sameId) {
+        t.error(error);
+        t.equal(id2, sameId);
+
+        frames.navigate(id2, 'http://roadbeats.com?', function (error, newId) {
+          t.error(error);
+          t.equal(newId, id1);
+
+          frames.all(function (error, list) {
+            t.error(error);
+            t.equal(list.length, 1);
+            t.equal(list[0].id, id1);
+          });
+
+        });
+      });
+    });
+});
+
 test('listing all open frames', function (t) {
   t.plan(16);
 
   serial()
-    .then(frames.reset)
-    .then('pid1', frames.open, ['http://azer.bike'])
-    .then('pid2', frames.open, ['http://roadbeats.com'])
-    .then('pid3', frames.open, ['https://roadbeats.com?'])
-    .then('pid4', frames.open, ['https://en.wikipedia.org'])
-    .done(function (error, pids) {
+    .run(frames.reset)
+    .then('id1', frames.open, ['http://azer.bike'])
+    .then('id2', frames.open, ['http://roadbeats.com'])
+    .then('id3', frames.open, ['https://roadbeats.com?'])
+    .then('id4', frames.open, ['https://en.wikipedia.org'])
+    .done(function (error, ids) {
       t.error(error);
 
-      var pid1 = pids.pid1[0];
-      var pid2 = pids.pid2[0];
-      var pid3 = pids.pid3[0];
-      var pid4 = pids.pid4[0];
+      var id1 = ids.id1[0];
+      var id2 = ids.id2[0];
+      var id3 = ids.id3[0];
+      var id4 = ids.id4[0];
 
-      t.notEqual(pid1, pid2);
-      t.notEqual(pid1, pid4);
-      t.notEqual(pid2, pid4);
-      t.equal(pid2, pid3);
+      t.notEqual(id1, id2);
+      t.notEqual(id1, id4);
+      t.notEqual(id2, id4);
+      t.equal(id2, id3);
 
       frames.all(function (error, list) {
         t.error(error);
         t.equal(list.length, 3);
-        t.equal(list[0].id, pid4);
-        t.equal(list[1].id, pid3);
-        t.equal(list[2].id, pid1);
+        t.equal(list[0].id, id4);
+        t.equal(list[1].id, id3);
+        t.equal(list[2].id, id1);
       });
 
-      frames.touch(pid1, function (error) {
+      frames.touch(id1, function (error) {
         t.error(error);
 
         frames.all(function (error, list) {
           t.error(error);
           t.equal(list.length, 3);
-          t.equal(list[0].id, pid1);
-          t.equal(list[1].id, pid4);
-          t.equal(list[2].id, pid3);
+          t.equal(list[0].id, id1);
+          t.equal(list[1].id, id4);
+          t.equal(list[2].id, id3);
         });
       });
 
