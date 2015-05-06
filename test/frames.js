@@ -107,7 +107,7 @@ test('killing a frame', function (t) {
 });
 
 test('navigating', function (t) {
-  t.plan(8);
+  t.plan(14);
 
   serial()
     .run(frames.reset)
@@ -123,9 +123,21 @@ test('navigating', function (t) {
         t.error(error);
         t.equal(id2, sameId);
 
+        frames.get(id2, function (error, frame) {
+          t.error(error);
+          t.equal(frame.id, id2);
+          t.equal(frame.url, 'roadbeats.com/yo');
+        });
+
         frames.navigate(id2, 'http://roadbeats.com?', function (error, newId) {
           t.error(error);
           t.equal(newId, id1);
+
+          frames.get(newId, function (error, frame) {
+            t.error(error);
+            t.equal(frame.id, newId);
+            t.equal(frame.url, 'roadbeats.com');
+          });
 
           frames.all(function (error, list) {
             t.error(error);
