@@ -1,6 +1,8 @@
 var test = require("prova");
 var serial = require("serially");
 var frames = require("../lib/frames");
+var urls = require("../lib/urls");
+var keywords = require("../lib/keywords");
 
 test('opening new frames', function (t) {
   t.plan(14);
@@ -150,7 +152,7 @@ test('navigating', function (t) {
     });
 });
 
-test('listing all open frames', function (t) {
+test('getting all open frames', function (t) {
   t.plan(16);
 
   serial()
@@ -193,5 +195,68 @@ test('listing all open frames', function (t) {
       });
 
     });
+});
 
+test('listing frames with titles and keywords', function (t) {
+  t.plan(16);
+
+  var roadbeats = {
+    'title': 'Road Beats',
+    'tags': ['journey', 'travel', 'hasankeyf'],
+    'url': 'http://roadbeats.com'
+  };
+
+  var wikipedia = {
+    'title': 'Wikipedia, the free encyclopedia',
+    'tags': ['wiki', 'information', 'english'],
+    'url': 'http://wikipedia.org'
+  };
+
+  var gezi = {
+    'title': 'Gezi Web Browser',
+    'tags': ['software', 'surf', 'www'],
+    'url': 'http://gezi.org'
+  };
+
+  serial()
+    .run(frames.reset)
+    .then(frames.open, [roadbeats.url])
+    .then(urls.save, [roadbeats.url, roadbeats])
+    .then(keywords.save, [roadbeats.url, roadbeats])
+    .then(frames.open, [wikipedia.url])
+    .then(urls.save, [wikipedia.url, wikipedia])
+    .then(keywords.save, [wikipedia.url, wikipedia])
+    .then(frames.open, [gezi.url])
+    .then(urls.save, [gezi.url, gezi])
+    .then(keywords.save, [gezi.url, gezi])
+    .then(frames.list)
+    .then('gezi+wiki', frames.list, [['gezi', 'wiki']])
+    .then('surf+travel', frames.list, [['surf', 'travel']])
+    .then('hasankeyf', frames.list, [['hasankeyf']])
+    .done(function (errors, results) {
+      t.error(errors);
+
+      var all = results.list[0];
+      t.equal(all.length, 3);
+      t.equal(all[0].title, gezi.title);
+      t.deepEqual(all[0].keywords, ['gezi', 'web', 'browser', 'software', 'surf', 'www']);
+      t.equal(all[1].title, wikipedia.title);
+      t.deepEqual(all[1].keywords, ['wikipedia', 'free', 'encyclopedia', 'wiki', 'information', 'english']);
+      t.equal(all[2].title, roadbeats.title);
+      t.deepEqual(all[2].keywords, ['roadbeats', 'road', 'beats', 'journey', 'travel', 'hasankeyf']);
+
+      var geziwiki = results['gezi+wiki'][0];
+      t.equal(geziwiki.length, 2);
+      t.equal(geziwiki[0].title, gezi.title);
+      t.equal(geziwiki[1].title, wikipedia.title);
+
+      var surftravel = results['surf+travel'][0];
+      t.equal(surftravel.length, 2);
+      t.equal(surftravel[0].title, gezi.title);
+      t.equal(surftravel[1].title, roadbeats.title);
+
+      var hasankeyf = results['hasankeyf'][0];
+      t.equal(hasankeyf.length, 1);
+      t.equal(hasankeyf[0].title, roadbeats.title);
+    });
 });

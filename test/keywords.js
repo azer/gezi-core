@@ -16,7 +16,7 @@ test('saving keyword&url pairs', function (t) {
     keywords.save(url, options, function (error) {
       t.error(error);
 
-      keywords.getKeywords(url, function (error, result) {
+      keywords.get(url, function (error, result) {
         t.error(error);
 
         result = result.map(function (k) {
