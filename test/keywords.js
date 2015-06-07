@@ -1,8 +1,8 @@
 var test = require("prova");
 var keywords = require("../lib/keywords");
 
-test('saving keyword&url pairs', function (t) {
-  t.plan(4);
+test('saving keyword & url pairs', function (t) {
+  t.plan(7);
 
   keywords.reset(function (error) {
     t.error(error);
@@ -23,7 +23,25 @@ test('saving keyword&url pairs', function (t) {
           return k.keyword;
         });
 
-        t.deepEqual(result, [ "en", "wikipedia", "wiki", "gezi", "taksim", "park", "free", "encyclopedia", "square", "riot", "revolution" ]);
+        t.deepEqual(result, ["revolution", "riot", "square", "encyclopedia", "free", "park", "taksim", "gezi", "wiki", "wikipedia", "en"]);
+
+        options.tags = options.tags.slice(2);
+        options.tags.push('protests');
+
+        keywords.save(url, options, function (error) {
+          t.error(error);
+
+          keywords.get(url, function (error, result) {
+            t.error(error);
+
+            result = result.map(function (k) {
+              return k.keyword;
+            });
+
+            t.deepEqual(result, ["protests", "revolution", "encyclopedia", "free", "park", "taksim", "gezi", "wiki", "wikipedia", "en", "riot", "square"]);
+          });
+
+        });
       });
     });
   });
@@ -57,7 +75,7 @@ test('searching keywords', function (t) {
           return r.url;
         });
 
-        t.deepEqual(results, ['diving.com', 'google.com?q=scuba']);
+        t.deepEqual(results, ['http://google.com?q=scuba', 'http://diving.com']);
       });
     });
   });

@@ -14,6 +14,7 @@
     "less-common-words": "^0.0.0",
     "parallel-loop": "0.0.3",
     "parallelly": "0.0.1",
+    "title-from-url": "0.0.0",
     "unique-now": "^0.0.1",
     "uniques": "0.0.1"
   },

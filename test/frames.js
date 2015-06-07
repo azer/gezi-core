@@ -84,7 +84,7 @@ test('opening an already opened url', function (t) {
   frames.open('http://en.wikipedia.org/wiki/open', function (error, frameId) {
     t.error(error);
 
-    frames.open('en.wikipedia.org/wiki/open?', function (error, existingFrameId) {
+    frames.open('http://en.wikipedia.org/wiki/OPEN/?#', function (error, existingFrameId) {
       t.error(error);
       t.equal(frameId, existingFrameId);
     });
@@ -128,7 +128,7 @@ test('navigating', function (t) {
         frames.get(id2, function (error, frame) {
           t.error(error);
           t.equal(frame.id, id2);
-          t.equal(frame.url, 'roadbeats.com/yo');
+          t.equal(frame.url, 'http://roadbeats.com/yo');
         });
 
         frames.navigate(id2, 'http://roadbeats.com?', function (error, newId) {
@@ -138,7 +138,7 @@ test('navigating', function (t) {
           frames.get(newId, function (error, frame) {
             t.error(error);
             t.equal(frame.id, newId);
-            t.equal(frame.url, 'roadbeats.com');
+            t.equal(frame.url, 'http://roadbeats.com');
           });
 
           frames.all(function (error, list) {
@@ -159,7 +159,7 @@ test('getting all open frames', function (t) {
     .run(frames.reset)
     .then('id1', frames.open, ['http://azer.bike'])
     .then('id2', frames.open, ['http://roadbeats.com'])
-    .then('id3', frames.open, ['https://roadbeats.com?'])
+    .then('id3', frames.open, ['http://roadbeats.com/?#'])
     .then('id4', frames.open, ['https://en.wikipedia.org'])
     .done(function (error, ids) {
       t.error(error);
@@ -194,69 +194,5 @@ test('getting all open frames', function (t) {
         });
       });
 
-    });
-});
-
-test('listing frames with titles and keywords', function (t) {
-  t.plan(16);
-
-  var roadbeats = {
-    'title': 'Road Beats',
-    'tags': ['journey', 'travel', 'hasankeyf'],
-    'url': 'http://roadbeats.com'
-  };
-
-  var wikipedia = {
-    'title': 'Wikipedia, the free encyclopedia',
-    'tags': ['wiki', 'information', 'english'],
-    'url': 'http://wikipedia.org'
-  };
-
-  var gezi = {
-    'title': 'Gezi Web Browser',
-    'tags': ['software', 'surf', 'www'],
-    'url': 'http://gezi.org'
-  };
-
-  serial()
-    .run(frames.reset)
-    .then(frames.open, [roadbeats.url])
-    .then(urls.save, [roadbeats.url, roadbeats])
-    .then(keywords.save, [roadbeats.url, roadbeats])
-    .then(frames.open, [wikipedia.url])
-    .then(urls.save, [wikipedia.url, wikipedia])
-    .then(keywords.save, [wikipedia.url, wikipedia])
-    .then(frames.open, [gezi.url])
-    .then(urls.save, [gezi.url, gezi])
-    .then(keywords.save, [gezi.url, gezi])
-    .then(frames.list)
-    .then('gezi+wiki', frames.list, [['gezi', 'wiki']])
-    .then('surf+travel', frames.list, [['surf', 'travel']])
-    .then('hasankeyf', frames.list, [['hasankeyf']])
-    .done(function (errors, results) {
-      t.error(errors);
-
-      var all = results.list[0];
-      t.equal(all.length, 3);
-      t.equal(all[0].title, gezi.title);
-      t.deepEqual(all[0].keywords, ['gezi', 'web', 'browser', 'software', 'surf', 'www']);
-      t.equal(all[1].title, wikipedia.title);
-      t.deepEqual(all[1].keywords, ['wikipedia', 'free', 'encyclopedia', 'wiki', 'information', 'english']);
-      t.equal(all[2].title, roadbeats.title);
-      t.deepEqual(all[2].keywords, ['roadbeats', 'road', 'beats', 'journey', 'travel', 'hasankeyf']);
-
-      var geziwiki = results['gezi+wiki'][0];
-      t.equal(geziwiki.length, 2);
-      t.equal(geziwiki[0].title, gezi.title);
-      t.equal(geziwiki[1].title, wikipedia.title);
-
-      var surftravel = results['surf+travel'][0];
-      t.equal(surftravel.length, 2);
-      t.equal(surftravel[0].title, gezi.title);
-      t.equal(surftravel[1].title, roadbeats.title);
-
-      var hasankeyf = results['hasankeyf'][0];
-      t.equal(hasankeyf.length, 1);
-      t.equal(hasankeyf[0].title, roadbeats.title);
     });
 });
