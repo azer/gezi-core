@@ -6,6 +6,7 @@ var keywords = require("./lib/keywords");
 var db = require("./lib/db");
 var frames = require("./lib/frames");
 var visit = require("./lib/visit");
+var search = require("./lib/search");
 
 module.exports = {
   frames: frames,
@@ -15,6 +16,7 @@ module.exports = {
   keywords: keywords,
   db: db,
   visit: visit,
+  search: search,
   reset: reset
 };
 
