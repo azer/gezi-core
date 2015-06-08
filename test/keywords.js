@@ -48,7 +48,7 @@ test('saving keyword & url pairs', function (t) {
 });
 
 test('searching keywords', function (t) {
-  t.plan(4);
+  t.plan(5);
 
   var data = [
     {
@@ -68,8 +68,9 @@ test('searching keywords', function (t) {
     keywords.save(data[1].url, data[1], function (error) {
       t.error(error);
 
-      keywords.search('scuba', function (error, results) {
+      keywords.search('cub', function (error, results) {
         t.error(error);
+        t.ok(results);
 
         results = results.map(function (r) {
           return r.url;
